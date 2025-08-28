@@ -1,0 +1,1062 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced Quantum Computing Simulator with Qubit Visualization, Quantum Gate Operations, and Quantum Algorithm Demonstrations">
+    <meta name="keywords" content="quantum computing, qubit simulator, quantum gates, superposition, entanglement, quantum algorithms">
+    <title>Quantum Computing Simulator | Explore Qubits, Gates & Algorithms</title>
+    <style>
+        :root {
+            --quantum-blue: #0b3d91;
+            --quantum-teal: #00b4d8;
+            --quantum-purple: #7b2cbf;
+            --background-dark: #121212;
+            --text-light: #e0e0e0;
+            --highlight: #ff9e00;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-light);
+            background-color: var(--background-dark);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--quantum-blue), var(--quantum-purple));
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 3px solid var(--highlight);
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(to right, var(--highlight), var(--quantum-teal));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        h2 {
+            color: var(--quantum-teal);
+            border-bottom: 2px solid var(--quantum-purple);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .simulator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .qubit-visualization {
+            background: rgba(11, 61, 145, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid var(--quantum-blue);
+        }
+        
+        .bloch-sphere {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        button {
+            background-color: var(--quantum-purple);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: var(--highlight);
+            transform: translateY(-2px);
+        }
+        
+        .circuit-display {
+            min-height: 300px;
+            background: rgba(123, 44, 191, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid var(--quantum-purple);
+            overflow-x: auto;
+        }
+        
+        .quantum-state {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+        
+        .algorithm-section {
+            margin-top: 2rem;
+            background: rgba(0, 180, 216, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--quantum-teal);
+        }
+        
+        select, input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--quantum-teal);
+            color: var(--text-light);
+            padding: 0.8rem;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--quantum-blue);
+            color: var(--quantum-teal);
+        }
+        /* Add to existing styles */
+        .ai-assistant {
+            margin-top: 2rem;
+            background: rgba(123, 44, 191, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--quantum-purple);
+        }
+
+        #ai-question {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--quantum-teal);
+            color: var(--text-light);
+            border-radius: 5px;
+        }
+
+        #ai-response {
+            min-height: 100px;
+            border-left: 3px solid var(--highlight);
+            padding-left: 1rem;
+            margin-top: 1rem;
+        }
+
+        .loading-dots::after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+        
+        @media (max-width: 768px) {
+            .simulator-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Quantum Computing Simulator</h1>
+            <p>Visualize and experiment with qubits, quantum gates, and algorithms</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <section id="quantum-basics">
+            <h2>Quantum Computing Fundamentals</h2>
+            <p>Quantum computing leverages quantum mechanical phenomena like <strong>superposition</strong> and <strong>entanglement</strong> to perform computations. Unlike classical bits (0 or 1), quantum bits (qubits) can exist in a superposition of states, enabling parallel processing of information.</p>
+            
+            <div class="simulator-container">
+                <div class="qubit-visualization">
+                    <h3>Qubit State Visualization</h3>
+                    <div class="bloch-sphere" id="blochSphere">
+                        <!-- Bloch sphere will be rendered here -->
+                    </div>
+                    <div class="quantum-state" id="quantumState">
+                        |ψ⟩ = 1.00|0⟩ + 0.00|1⟩
+                    </div>
+                    <div class="controls">
+                        <button id="hadamard">H Gate</button>
+                        <button id="paulix">X Gate</button>
+                        <button id="pauliy">Y Gate</button>
+                        <button id="pauliz">Z Gate</button>
+                        <button id="reset">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="circuit-display">
+                    <h3>Quantum Circuit</h3>
+                    <div id="circuitDiagram">
+                        <!-- Circuit will be rendered here -->
+                    </div>
+                    <div class="controls">
+                        <select id="gateSelect">
+                            <option value="h">Hadamard (H)</option>
+                            <option value="x">Pauli-X</option>
+                            <option value="y">Pauli-Y</option>
+                            <option value="z">Pauli-Z</option>
+                            <option value="cnot">CNOT</option>
+                            <option value="swap">SWAP</option>
+                        </select>
+                        <button id="addGate">Add Gate</button>
+                        <button id="runCircuit">Run Circuit</button>
+                        <button id="clearCircuit">Clear Circuit</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="algorithm-section">
+            <h2>Quantum Algorithms</h2>
+            <p>Explore fundamental quantum algorithms that demonstrate the power of quantum computation:</p>
+            
+            <div class="controls">
+                <select id="algorithmSelect">
+                    <option value="deutsch">Deutsch-Jozsa Algorithm</option>
+                    <option value="grover">Grover's Search</option>
+                    <option value="shor">Shor's Factorization</option>
+                    <option value="qft">Quantum Fourier Transform</option>
+                </select>
+                <button id="runAlgorithm">Run Algorithm</button>
+            </div>
+            
+            <div id="algorithmOutput" class="quantum-state" style="margin-top: 1rem;">
+                Select an algorithm to see its demonstration...
+            </div>
+        </section>
+        
+        <section id="quantum-complexity">
+            <h2>Quantum Complexity Advantages</h2>
+            <p>Quantum computers offer potential exponential speedups for certain problems:</p>
+            <ul>
+                <li><strong>Shor's algorithm</strong>: Factors integers in polynomial time vs. exponential time classically</li>
+                <li><strong>Grover's algorithm</strong>: Provides quadratic speedup for unstructured search</li>
+                <li><strong>Quantum simulation</strong>: Efficiently simulates quantum systems that are intractable classically</li>
+                <li><strong>Machine learning</strong>: Potential speedups in training and inference for certain models</li>
+            </ul>
+        </section>
+        
+    </div>
+        <!-- AI Assistant Section -->
+    <section class="ai-assistant">
+        <h2>Quantum AI Assistant</h2>
+        <p>Ask any question about quantum computing:</p>
+        
+        <textarea id="ai-question" placeholder="Example: What's the difference between superposition and entanglement?"></textarea>
+        <div class="controls">
+            <button id="ask-ai">Ask Quantum AI</button>
+            <button id="clear-ai">Clear</button>
+        </div>
+        
+        <div id="ai-response" class="quantum-state">
+            AI responses will appear here...
+        </div>
+    </section>
+
+    <section class="dataset-section">
+        <h2>Quantum Hardware Data</h2>
+        <div id="quantum-data" class="quantum-state">
+            Loading quantum processor data...
+        </div>
+        <button id="load-data">Refresh Data</button>
+    </section>
+
+    <section class="visualization-3d">
+        <h2>3D Quantum State</h2>
+        <div id="quantum-3d" style="width: 100%; height: 400px;"></div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>Quantum Computing Simulator | Explore the future of computation</p>
+            <p>© 2025 Quantum Simulator Project | All measurements in simulated quantum units</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quantum State Representation
+    class Complex {
+    constructor(real, imag = 0) {
+        this.real = real;
+        this.imag = imag;
+    }
+
+    static from(value) {
+        return value instanceof Complex ? value : new Complex(value, 0);
+    }
+
+    add(other) {
+        return new Complex(this.real + other.real, this.imag + other.imag);
+    }
+
+    sub(other) {
+        return new Complex(this.real - other.real, this.imag - other.imag);
+    }
+
+    mul(other) {
+        return new Complex(
+            this.real * other.real - this.imag * other.imag,
+            this.real * other.imag + this.imag * other.real
+        );
+    }
+
+    div(scalar) {
+        return new Complex(this.real / scalar, this.imag / scalar);
+    }
+
+    abs2() {
+        return this.real ** 2 + this.imag ** 2;
+    }
+
+    conj() {
+        return new Complex(this.real, -this.imag);
+    }
+
+    arg() {
+        return Math.atan2(this.imag, this.real);
+    }
+
+    toString() {
+        const r = this.real.toFixed(2);
+        const i = this.imag.toFixed(2);
+        if (this.imag === 0) return `${r}`;
+        if (this.real === 0) return `${i}i`;
+        return `${r} ${this.imag < 0 ? '-' : '+'} ${Math.abs(i)}i`;
+    }
+}
+
+class Qubit {
+    constructor() {
+        this.reset();
+    }
+    
+    reset() {
+        this.alpha = new Complex(1, 0);
+        this.beta = new Complex(0, 0);
+        this.updateDisplay();
+        this.renderBlochSphere();
+    }
+
+    applyGate(gate) {
+        const { alpha, beta } = this;
+
+        switch (gate) {
+            case 'h': {
+                const invSqrt2 = 1 / Math.sqrt(2);
+                this.alpha = alpha.add(beta).mul(new Complex(invSqrt2));
+                this.beta = alpha.sub(beta).mul(new Complex(invSqrt2));
+                break;
+            }
+            case 'x': {
+                [this.alpha, this.beta] = [this.beta, this.alpha];
+                break;
+            }
+            case 'y': {
+                const i = new Complex(0, 1);
+                const newAlpha = this.beta.mul(new Complex(0, -1));
+                const newBeta = this.alpha.mul(i);
+                this.alpha = newAlpha;
+                this.beta = newBeta;
+                break;
+            }
+            case 'z': {
+                this.beta = this.beta.mul(new Complex(-1));
+                break;
+            }
+        }
+
+        this.normalize();
+        this.updateDisplay();
+        this.renderBlochSphere();
+    }
+
+    normalize() {
+        const norm = Math.sqrt(this.alpha.abs2() + this.beta.abs2());
+        if (norm > 0) {
+            this.alpha = this.alpha.div(norm);
+            this.beta = this.beta.div(norm);
+        }
+    }
+
+    updateDisplay() {
+        const alphaStr = this.alpha.toString();
+        const betaStr = this.beta.toString();
+        document.getElementById('quantumState').innerHTML =
+            `|ψ⟩ = ${alphaStr}|0⟩ + ${betaStr}|1⟩`;
+    }
+
+    renderBlochSphere() {
+        const blochSphere = document.getElementById('blochSphere');
+        if (!blochSphere) return;
+        blochSphere.innerHTML = '';
+
+        const alphaAbs = Math.sqrt(this.alpha.abs2());
+        const betaAbs = Math.sqrt(this.beta.abs2());
+        const theta = 2 * Math.atan2(betaAbs, alphaAbs);
+        const phi = this.beta.arg() - this.alpha.arg();
+        const x = Math.sin(theta) * Math.cos(phi);
+        const y = Math.sin(theta) * Math.sin(phi);
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.setAttribute('viewBox', '0 0 300 300');
+
+        // Draw sphere
+        const sphere = document.createElementNS(svgNS, "circle");
+        sphere.setAttribute('cx', '150');
+        sphere.setAttribute('cy', '150');
+        sphere.setAttribute('r', '140');
+        sphere.setAttribute('fill', 'none');
+        sphere.setAttribute('stroke', '#4fc3f7');
+        sphere.setAttribute('stroke-width', '2');
+        svg.appendChild(sphere);
+
+        // Draw axes
+        const drawLine = (x1, y1, x2, y2) => {
+            const line = document.createElementNS(svgNS, "line");
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('stroke', '#888');
+            line.setAttribute('stroke-width', '1');
+            line.setAttribute('stroke-dasharray', '5,5');
+            svg.appendChild(line);
+        };
+
+        drawLine(10, 150, 290, 150); // X-axis
+        drawLine(150, 10, 150, 290); // Y-axis
+
+        // Draw state vector
+        const xPx = 150 + x * 120;
+        const yPx = 150 - y * 120;
+
+        const vector = document.createElementNS(svgNS, "line");
+        vector.setAttribute('x1', '150');
+        vector.setAttribute('y1', '150');
+        vector.setAttribute('x2', xPx);
+        vector.setAttribute('y2', yPx);
+        vector.setAttribute('stroke', '#ff4081');
+        vector.setAttribute('stroke-width', '3');
+        svg.appendChild(vector);
+
+        // Draw endpoint
+        const point = document.createElementNS(svgNS, "circle");
+        point.setAttribute('cx', xPx);
+        point.setAttribute('cy', yPx);
+        point.setAttribute('r', '5');
+        point.setAttribute('fill', '#ff4081');
+        svg.appendChild(point);
+
+        blochSphere.appendChild(svg);
+    }
+}
+
+class QuantumCircuit {
+    constructor() {
+        this.gates = [];
+        this.qubits = [new Qubit(), new Qubit()];
+        this.circuitElement = document.getElementById('circuitDiagram');
+        this.initializeDisplay();
+    }
+
+    initializeDisplay() {
+        // Initialize both qubits to |0⟩ state
+        this.qubits[0].reset();
+        this.qubits[1].reset();
+    }
+
+    addGate(gateType) {
+        this.gates.push(gateType);
+        this.renderCircuit();
+    }
+
+    clearCircuit() {
+        this.gates = [];
+        this.qubits = [new Qubit(), new Qubit()];
+        this.renderCircuit();
+        this.initializeDisplay(); // This will reset both display and Bloch sphere
+    }
+
+    runCircuit() {
+        // Reset qubits
+        this.qubits = [new Qubit(), new Qubit()];
+
+        for (const gate of this.gates) {
+            if (gate === 'cnot') {
+                // Proper CNOT implementation
+                const control = this.qubits[0];
+                const target = this.qubits[1];
+                
+                // Create new state (simplified - should properly handle entanglement)
+                const newAlpha = control.alpha.mul(target.alpha);
+                const newBeta = control.alpha.mul(target.beta);
+                const newGamma = control.beta.mul(target.beta);
+                const newDelta = control.beta.mul(target.alpha);
+                
+                this.qubits[0].alpha = newAlpha;
+                this.qubits[0].beta = newBeta;
+                this.qubits[1].alpha = newGamma;
+                this.qubits[1].beta = newDelta;
+            } else if (gate === 'swap') {
+                // Full SWAP operation
+                [this.qubits[0].alpha, this.qubits[1].alpha] = 
+                    [this.qubits[1].alpha, this.qubits[0].alpha];
+                [this.qubits[0].beta, this.qubits[1].beta] = 
+                    [this.qubits[1].beta, this.qubits[0].beta];
+                [this.qubits[0].phase, this.qubits[1].phase] = 
+                    [this.qubits[1].phase, this.qubits[0].phase];
+            } else {
+                this.qubits[0].applyGate(gate);
+            }
+        }
+
+        // Update displays for both qubits
+        this.qubits[0].updateDisplay();
+        this.qubits[1].updateDisplay();
+        this.qubits[0].renderBlochSphere();
+    }
+        renderCircuit() {
+            this.circuitElement.innerHTML = '';
+            
+            if (this.gates.length === 0) {
+                this.circuitElement.innerHTML = '<p>No gates in circuit</p>';
+                return;
+            }
+
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100');
+            svg.setAttribute('viewBox', `0 0 ${this.gates.length * 60 + 40} 100`);
+
+            // Qubit lines
+            for (let i = 0; i < 2; i++) {
+                const line = document.createElementNS(svgNS, "line");
+                line.setAttribute('x1', '20');
+                line.setAttribute('y1', 30 + i * 40);
+                line.setAttribute('x2', this.gates.length * 60 + 20);
+                line.setAttribute('y2', 30 + i * 40);
+                line.setAttribute('stroke', '#888');
+                line.setAttribute('stroke-width', '2');
+                svg.appendChild(line);
+            }
+
+            // Draw gates
+            this.gates.forEach((gate, index) => {
+                const x = 20 + index * 60;
+
+                if (['h', 'x', 'y', 'z'].includes(gate)) {
+                    // Single-qubit gate
+                    const rect = document.createElementNS(svgNS, "rect");
+                    rect.setAttribute('x', x - 15);
+                    rect.setAttribute('y', 15);
+                    rect.setAttribute('width', '30');
+                    rect.setAttribute('height', '30');
+                    rect.setAttribute('fill', '#7b1fa2');
+                    rect.setAttribute('rx', '5');
+                    svg.appendChild(rect);
+
+                    const text = document.createElementNS(svgNS, "text");
+                    text.setAttribute('x', x);
+                    text.setAttribute('y', 35);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('fill', 'white');
+                    text.textContent = gate.toUpperCase();
+                    svg.appendChild(text);
+                } 
+                else if (gate === 'cnot') {
+                    // CNOT gate
+                    const circle = document.createElementNS(svgNS, "circle");
+                    circle.setAttribute('cx', x);
+                    circle.setAttribute('cy', 50);
+                    circle.setAttribute('r', '15');
+                    circle.setAttribute('fill', '#1976d2');
+                    svg.appendChild(circle);
+
+                    const line = document.createElementNS(svgNS, "line");
+                    line.setAttribute('x1', x);
+                    line.setAttribute('y1', 30);
+                    line.setAttribute('x2', x);
+                    line.setAttribute('y2', 70);
+                    line.setAttribute('stroke', '#1976d2');
+                    line.setAttribute('stroke-width', '2');
+                    svg.appendChild(line);
+
+                    const plus = document.createElementNS(svgNS, "text");
+                    plus.setAttribute('x', x);
+                    plus.setAttribute('y', 55);
+                    plus.setAttribute('text-anchor', 'middle');
+                    plus.setAttribute('fill', 'white');
+                    plus.textContent = '+';
+                    svg.appendChild(plus);
+                } 
+                else if (gate === 'swap') {
+                    // SWAP gate
+                    const drawX = (y) => {
+                        const line1 = document.createElementNS(svgNS, "line");
+                        line1.setAttribute('x1', x - 10);
+                        line1.setAttribute('y1', y - 10);
+                        line1.setAttribute('x2', x + 10);
+                        line1.setAttribute('y2', y + 10);
+                        line1.setAttribute('stroke', '#ff4081');
+                        line1.setAttribute('stroke-width', '2');
+                        svg.appendChild(line1);
+
+                        const line2 = document.createElementNS(svgNS, "line");
+                        line2.setAttribute('x1', x - 10);
+                        line2.setAttribute('y1', y + 10);
+                        line2.setAttribute('x2', x + 10);
+                        line2.setAttribute('y2', y - 10);
+                        line2.setAttribute('stroke', '#ff4081');
+                        line2.setAttribute('stroke-width', '2');
+                        svg.appendChild(line2);
+                    };
+
+                    drawX(30); // Top qubit
+                    drawX(70); // Bottom qubit
+                }
+            });
+
+            this.circuitElement.appendChild(svg);
+        }
+    }
+        
+        // Algorithm Demonstrations
+        function runAlgorithm(algorithm) {
+            const outputElement = document.getElementById('algorithmOutput');
+            
+            switch(algorithm) {
+                case 'deutsch':
+                    outputElement.innerHTML = `
+                        <h4>Deutsch-Jozsa Algorithm</h4>
+                        <p>Determines whether a function is constant or balanced with a single query (vs. 2<sup>n-1</sup>+1 classically).</p>
+                        <p>1. Initialize |0⟩<sup>⊗n</sup>|1⟩</p>
+                        <p>2. Apply Hadamard gates to all qubits</p>
+                        <p>3. Apply oracle function U<sub>f</sub></p>
+                        <p>4. Apply Hadamard to first n qubits</p>
+                        <p>5. Measure first register - all zeros means constant, otherwise balanced</p>
+                        <p><strong>Result:</strong> Function is balanced (measured |1⟩ in first qubit)</p>
+                    `;
+                    break;
+                    
+                case 'grover':
+                    outputElement.innerHTML = `
+                        <h4>Grover's Search Algorithm</h4>
+                        <p>Provides quadratic speedup for unstructured search (O(√N) vs. O(N) classically).</p>
+                        <p>1. Initialize superposition of all states</p>
+                        <p>2. Apply oracle to mark solution states</p>
+                        <p>3. Apply diffusion operator to amplify amplitude of marked states</p>
+                        <p>4. Repeat steps 2-3 ≈π√N/4 times</p>
+                        <p>5. Measure to obtain solution with high probability</p>
+                        <p><strong>Result:</strong> Found solution state |101⟩ after 3 iterations</p>
+                    `;
+                    break;
+                    
+                case 'shor':
+                    outputElement.innerHTML = `
+                        <h4>Shor's Factorization Algorithm</h4>
+                        <p>Factors integers in polynomial time (exponential speedup over classical).</p>
+                        <p>1. Choose random number a < N</p>
+                        <p>2. Find period r of f(x) = a<sup>x</sup> mod N using QFT</p>
+                        <p>3. If r is even and a<sup>r/2</sup> ≢ -1 mod N, then factors are gcd(a<sup>r/2</sup>±1, N)</p>
+                        <p><strong>Result:</strong> Factors of 15 are 3 and 5 (using a=7, found period r=4)</p>
+                    `;
+                    break;
+                    
+                case 'qft':
+                    outputElement.innerHTML = `
+                        <h4>Quantum Fourier Transform</h4>
+                        <p>Exponential speedup over classical FFT, key component in many quantum algorithms.</p>
+                        <p>1. Apply Hadamard to first qubit</p>
+                        <p>2. Apply controlled rotations with angles π/2, π/4, π/8,...</p>
+                        <p>3. Repeat for all qubits with appropriate phase rotations</p>
+                        <p>4. Swap qubits to correct order</p>
+                        <p><strong>Result:</strong> Transformed state shows frequency components of input</p>
+                    `;
+                    break;
+            }
+        }
+        
+        // Initialize the simulator
+        document.addEventListener('DOMContentLoaded', () => {
+            const qubit = new Qubit();
+            const circuit = new QuantumCircuit();
+            
+            qubit.renderBlochSphere();
+            
+            // Single qubit gate buttons
+            document.getElementById('hadamard').addEventListener('click', () => qubit.applyGate('h'));
+            document.getElementById('paulix').addEventListener('click', () => qubit.applyGate('x'));
+            document.getElementById('pauliy').addEventListener('click', () => qubit.applyGate('y'));
+            document.getElementById('pauliz').addEventListener('click', () => qubit.applyGate('z'));
+            document.getElementById('reset').addEventListener('click', () => qubit.reset());
+            
+            // Circuit operations
+            document.getElementById('addGate').addEventListener('click', () => {
+                const gateType = document.getElementById('gateSelect').value;
+                circuit.addGate(gateType);
+            });
+            
+            document.getElementById('runCircuit').addEventListener('click', () => circuit.runCircuit());
+            document.getElementById('clearCircuit').addEventListener('click', () => circuit.clearCircuit());
+            
+            // Algorithm demonstrations
+            document.getElementById('runAlgorithm').addEventListener('click', () => {
+                const algorithm = document.getElementById('algorithmSelect').value;
+                runAlgorithm(algorithm);
+            });
+            
+            // Initial circuit render
+            circuit.renderCircuit();
+        });
+
+        // AI Question Handling
+        document.getElementById('ask-ai').addEventListener('click', async function() {
+            const question = document.getElementById('ai-question').value.trim();
+            const responseElement = document.getElementById('ai-response');
+            
+            if (!question) {
+                responseElement.textContent = "Please enter a question first";
+                return;
+            }
+            
+            responseElement.innerHTML = '<span class="loading-dots">Thinking</span>';
+            this.disabled = true;
+            
+            try {
+                const response = await fetch('/api/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    responseElement.textContent = "Error: " + data.error;
+                } else {
+                    // Format the response with line breaks for readability
+                    responseElement.innerHTML = data.answer.replace(/\n/g, '<br>');
+                }
+            } catch (err) {
+                responseElement.textContent = "Network error: " + err.message;
+            } finally {
+                this.disabled = false;
+            }
+        });
+
+        // Clear AI question and response
+        document.getElementById('clear-ai').addEventListener('click', function() {
+            document.getElementById('ai-question').value = '';
+            document.getElementById('ai-response').textContent = 'AI responses will appear here...';
+        });
+
+        // Load quantum data and display in a table
+        document.getElementById('load-data').addEventListener('click', async () => {
+            const response = await fetch('/api/quantum-data');
+            const data = await response.json();
+            
+            // Build table headers matching your data fields
+            let html = '<table><tr><th>Simulation ID</th><th>Algorithm</th><th>Qubits</th><th>Accuracy</th><th>Runtime (ms)</th></tr>';
+            
+            // Each row is an object (because of conn.row_factory), access by keys
+            data.forEach(row => {
+                html += `<tr>
+                    <td>${row.simulation_id}</td>
+                    <td>${row.algorithm}</td>
+                    <td>${row.qubits}</td>
+                    <td>${(row.accuracy * 100).toFixed(2)}%</td>
+                    <td>${row.runtime_ms.toFixed(0)}</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            document.getElementById('quantum-data').innerHTML = html;
+        });
+        // Colors for different gates
+    const GATE_COLORS = {
+        'h': 0x4fc3f7,  // Blue (Hadamard)
+        'x': 0xff5252,  // Red (Pauli-X)
+        'y': 0x69f0ae,  // Green (Pauli-Y)
+        'z': 0xffd740,  // Yellow (Pauli-Z)
+        'default': 0x00b4d8  // Teal (default)
+    };
+
+    function init3DVisualization() {
+    const container = document.getElementById('quantum-3d');
+    if (!container) {
+        console.error('3D visualization container not found');
+        return null;
+    }
+
+    const width = container.clientWidth;
+    const height = 400;
+    
+    // Scene setup with dark background
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x121212); // Dark background
+    const camera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ 
+        antialias: true,
+        alpha: false
+    });
+    renderer.setSize(width, height);
+    container.appendChild(renderer.domElement);
+    
+    // Dark theme colors
+    const DARK_THEME = {
+        sphere: 0x4fc3f7,       // Blue (wireframe)
+        arrow: 0xff4081,        // Pink (state vector)
+        axes: {
+            x: 0xff5252,        // Red
+            y: 0x69f0ae,        // Green
+            z: 0x2196F3         // Blue
+        },
+        background: 0x121212,   // Dark background
+        text: 0xffffff          // White text
+    };
+    
+    // Bloch Sphere (wireframe)
+    const geometry = new THREE.SphereGeometry(1, 32, 32);
+    const material = new THREE.MeshBasicMaterial({ 
+        color: DARK_THEME.sphere,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.7
+    });
+    const sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+    
+    // State Vector (arrow)
+    const arrow = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 0, 1), // Default direction (|0⟩ state)
+        new THREE.Vector3(0, 0, 0),  // Origin
+        1.5,                         // Length
+        DARK_THEME.arrow,            // Color
+        0.3,                         // Head length
+        0.2                          // Head width
+    );
+    scene.add(arrow);
+    
+    // Custom Axes (colored individually)
+    const axesSize = 1.5;
+    const axes = new THREE.Group();
+    
+    // X-axis (red)
+    const xAxis = new THREE.ArrowHelper(
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 0, 0),
+        axesSize,
+        DARK_THEME.axes.x,
+        0.2,
+        0.1
+    );
+    axes.add(xAxis);
+    
+    // Y-axis (green)
+    const yAxis = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 0),
+        axesSize,
+        DARK_THEME.axes.y,
+        0.2,
+        0.1
+    );
+    axes.add(yAxis);
+    
+    // Z-axis (blue)
+    const zAxis = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 0, 1),
+        new THREE.Vector3(0, 0, 0),
+        axesSize,
+        DARK_THEME.axes.z,
+        0.2,
+        0.1
+    );
+    axes.add(zAxis);
+    
+    scene.add(axes);
+    
+    // Add labels for axes with dark theme styling
+    const addAxisLabel = (text, position, color) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const context = canvas.getContext('2d');
+        context.fillStyle = '#121212'; // Dark background for label
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = color || DARK_THEME.text;
+        context.font = 'Bold 32px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(text, 64, 64);
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        const material = new THREE.SpriteMaterial({ 
+            map: texture,
+            transparent: true
+        });
+        const sprite = new THREE.Sprite(material);
+        sprite.position.copy(position);
+        sprite.scale.set(0.3, 0.3, 0.3);
+        scene.add(sprite);
+    };
+    
+    addAxisLabel('X', new THREE.Vector3(2.0, 0, 0), DARK_THEME.axes.x);
+    addAxisLabel('Y', new THREE.Vector3(0, 2.0, 0), DARK_THEME.axes.y);
+    addAxisLabel('Z', new THREE.Vector3(0, 0, 2.0), DARK_THEME.axes.z);
+    
+    // Enhanced lighting for dark theme
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
+    
+    // Camera position and controls
+    camera.position.z = 3;
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    
+    // Handle window resize
+    const handleResize = () => {
+        const width = container.clientWidth;
+        const height = 400;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+    };
+    window.addEventListener('resize', handleResize);
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+    
+    return { scene, sphere, arrow, controls };
+}
+
+    // Update the 3D visualization based on qubit state
+    function update3DVisualization(qubit, visualization, gateType = null) {
+        if (!visualization) return;
+        
+        const { sphere, arrow } = visualization;
+        
+        // Convert qubit state to spherical coordinates
+        const alphaAbs = Math.sqrt(qubit.alpha.abs2());
+        const betaAbs = Math.sqrt(qubit.beta.abs2());
+        const theta = 2 * Math.atan2(betaAbs, alphaAbs);
+        const phi = qubit.beta.arg() - qubit.alpha.arg();
+        
+        // Calculate the new direction vector
+        const x = Math.sin(theta) * Math.cos(phi);
+        const y = Math.sin(theta) * Math.sin(phi);
+        const z = Math.cos(theta);
+        
+        // Update arrow direction
+        const direction = new THREE.Vector3(x, y, z).normalize();
+        arrow.setDirection(direction);
+        arrow.setLength(1.5, 0.3, 0.2);
+        
+        // Update sphere color based on last applied gate
+        if (gateType && GATE_COLORS[gateType]) {
+            sphere.material.color.setHex(GATE_COLORS[gateType]);
+        } else {
+            sphere.material.color.setHex(GATE_COLORS.default);
+        }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const qubit = new Qubit();
+        const circuit = new QuantumCircuit();
+        const visualization = init3DVisualization();
+        
+        // Track the last applied gate
+        let currentGate = null;
+        
+        // Helper function to update all visualizations
+        const updateVisualizations = (gateType = null) => {
+            qubit.updateDisplay();
+            update3DVisualization(qubit, visualization, gateType);
+        };
+        
+        // Single qubit gate buttons
+        document.getElementById('hadamard').addEventListener('click', () => {
+            qubit.applyGate('h');
+            updateVisualizations('h');
+        });
+        
+        document.getElementById('paulix').addEventListener('click', () => {
+            qubit.applyGate('x');
+            updateVisualizations('x');
+        });
+        
+        document.getElementById('pauliy').addEventListener('click', () => {
+            qubit.applyGate('y');
+            updateVisualizations('y');
+        });
+        
+        document.getElementById('pauliz').addEventListener('click', () => {
+            qubit.applyGate('z');
+            updateVisualizations('z');
+        });
+        
+        document.getElementById('reset').addEventListener('click', () => {
+            qubit.reset();
+            updateVisualizations();
+        });
+        
+        // Initial render
+        updateVisualizations();
+    });
+ </script>
+</body>
+</html>
